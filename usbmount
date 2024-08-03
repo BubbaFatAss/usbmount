@@ -49,6 +49,7 @@ FILESYSTEMS=
 MOUNTOPTIONS=
 FS_MOUNTOPTIONS=
 VERBOSE="no"
+MOUNT_USING_NTFS_THREE=0
 
 BLKID="/sbin/blkid"
 UDEVADM="/bin/udevadm"
@@ -118,6 +119,12 @@ if [ "${1}" = "add" ]; then
 		mount -U "${UUID}" || log err "mount by UUID with ${UUID} wasn't successful; return code ${?}"
 	else
 		log debug "${DEVNAME} contains filesystem type ${TYPE}"
+		if [ "${TYPE}" = "ntfs" ]; then
+        	if [ "${MOUNT_USING_NTFS_THREE:-1}" -eq 1 ]; then
+            	log info "Remapping TYPE from ntfs to ntfs3"
+            	TYPE="ntfs3"
+        	fi
+    	fi
 
 		fstype="${TYPE}"
 		# Test if the filesystem type is in the list of filesystem
